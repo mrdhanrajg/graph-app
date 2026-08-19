@@ -1,33 +1,47 @@
 # Developer Knowledge Graph
 
-A full-stack graph database application built for the Wexa AI take-home assignment.
+A full-stack graph database application that models relationships between developers, projects, and technologies using **CognoDB** as the graph database, **Spring Boot + Java 21** as the backend, and **React + Vite** for the frontend.
 
-The application uses **CognoDB** as the graph database, a **Spring Boot + Java** backend, and a **React + Vite** frontend with an interactive graph visualization.
+## Live Demo
+
+**Frontend:**
+https://graph-app-one.vercel.app/
+
+**Backend API:**
+https://graph-app-o34z.onrender.com/
+
+**GitHub Repository:**
+https://github.com/mrdhanrajg/graph-app
 
 ---
 
 ## Overview
 
-The Developer Knowledge Graph models relationships between:
+The Developer Knowledge Graph represents how developers, projects, and technologies are connected.
 
-* Developers
-* Projects
-* Technologies
+A developer can:
 
-A developer can know multiple technologies, work on multiple projects, and projects can use multiple technologies. Technologies can also be connected to other technologies.
+* know multiple technologies
+* work on multiple projects
+* use different technologies within those projects
 
-The application allows users to explore these relationships and discover technologies connected through multi-hop graph traversal.
+Technologies can also be related to other technologies.
 
-### Main features
+The application allows users to explore these relationships through an interactive graph and discover technologies connected through multi-hop traversal.
+
+### Main Features
 
 * Developer technology profile
 * Project and technology relationships
-* Relationship properties such as experience, proficiency, role, duration and version
+* Relationship properties such as experience, proficiency, role, duration, and version
 * Interactive graph visualization
 * Multi-hop technology discovery
 * Parameterized Cypher queries
-* Graceful database error handling
-* REST API
+* REST APIs
+* Loading, empty, and error states
+* Centralized exception handling
+* Environment-based database configuration
+* Dockerized backend deployment
 
 ---
 
@@ -35,11 +49,9 @@ The application allows users to explore these relationships and discover technol
 
 The primary questions in this application are about **connections and relationships**, rather than only individual records.
 
-For example:
+For example, the application needs to discover technologies connected through a developer's projects and technology stack.
 
-> Which technologies are connected to the technologies used by projects that a developer has worked on?
-
-This requires traversing multiple relationships:
+This requires traversing relationships such as:
 
 ```text
 Developer
@@ -57,13 +69,17 @@ Technology
 Technology
 ```
 
-A relational database could represent this model using multiple tables and join tables, but multi-hop relationship traversal becomes increasingly dependent on joins across those tables.
+A relational database could represent the same domain using multiple tables and junction tables, but multi-hop relationship queries would require joins across those structures.
 
-A graph database represents the relationships directly, making traversal between connected entities a natural part of the data model.
+A graph database represents entities and their relationships directly, making traversal across connected entities a natural part of the model.
+
+This application therefore uses a graph database because **the relationships themselves are central to the questions the application answers**.
 
 ---
 
-## Graph Data Model
+## Use Case
+
+The application models a developer knowledge graph.
 
 ### Nodes
 
@@ -77,12 +93,15 @@ Technology
 
 ```text
 Developer ── KNOWS ────────> Technology
+
 Developer ── WORKED_ON ────> Project
+
 Project   ── USES ─────────> Technology
+
 Technology ── RELATED_TO ──> Technology
 ```
 
-### Relationship properties
+### Relationship Properties
 
 `KNOWS`
 
@@ -104,41 +123,6 @@ role
 version
 ```
 
-### Example
-
-```text
-                         ┌─────────────────┐
-                         │     Java        │
-                         └────────┬────────┘
-                                  │
-                             RELATED_TO
-                                  │
-                                  v
-                         ┌─────────────────┐
-                         │   Spring Boot   │
-                         └────────┬────────┘
-                                  │
-                             RELATED_TO
-                                  │
-                                  v
-                         ┌─────────────────┐
-                         │  Microservices  │
-                         └─────────────────┘
-
-
-┌─────────────┐      WORKED_ON      ┌─────────────────────────────┐
-│  Dhanraj    │────────────────────>│ Developer Knowledge Platform│
-└──────┬──────┘                     └─────────────┬───────────────┘
-       │                                          │
-       │ KNOWS                                    │ USES
-       │                                          │
-       ├────────────> Java                        ├────────> Java
-       │                                          ├────────> React
-       ├────────────> React                       ├────────> Spring Boot
-       │                                          └────────> Kafka
-       └────────────> Kafka
-```
-
 ---
 
 ## Architecture
@@ -151,8 +135,8 @@ version
 │  Recommendations             │
 │  Interactive Graph           │
 └──────────────┬───────────────┘
-               │ HTTP
-               v
+               │ HTTPS
+               ▼
 ┌──────────────────────────────┐
 │       Spring Boot API        │
 │                              │
@@ -163,7 +147,7 @@ version
 └──────────────┬───────────────┘
                │
                │ Neo4j Java Driver
-               v
+               ▼
 ┌──────────────────────────────┐
 │           CognoDB            │
 │                              │
@@ -172,6 +156,25 @@ version
 │ Properties                   │
 │ Cypher Queries               │
 └──────────────────────────────┘
+```
+
+### Production Deployment
+
+```text
+Browser
+   │
+   ▼
+Vercel
+React + Vite
+   │
+   │ HTTPS REST API
+   ▼
+Render
+Docker + Java 21 + Spring Boot
+   │
+   │ Bolt
+   ▼
+CognoDB
 ```
 
 ---
@@ -184,6 +187,7 @@ version
 * Spring Boot 4.1
 * Spring Web MVC
 * Official Neo4j Java Driver
+* Maven
 
 ### Database
 
@@ -197,6 +201,13 @@ version
 * Vite
 * React Flow
 * Lucide React
+
+### Deployment
+
+* GitHub
+* Vercel
+* Render
+* Docker
 
 ---
 
@@ -219,7 +230,10 @@ wexa-graph-app/
 │   │       └── resources/
 │   │           └── application.properties
 │   │
-│   └── pom.xml
+│   ├── Dockerfile
+│   ├── pom.xml
+│   ├── mvnw
+│   └── mvnw.cmd
 │
 ├── frontend/
 │   ├── src/
@@ -228,7 +242,8 @@ wexa-graph-app/
 │   │   ├── App.jsx
 │   │   └── main.jsx
 │   │
-│   └── package.json
+│   ├── package.json
+│   └── vite.config.js
 │
 ├── docs/
 │   └── screenshots/
@@ -241,7 +256,7 @@ wexa-graph-app/
 
 ## API Endpoints
 
-### Developer technologies
+### Developer Technologies
 
 ```http
 GET /api/developers/{name}/technologies
@@ -249,74 +264,35 @@ GET /api/developers/{name}/technologies
 
 Returns the technologies known by the specified developer.
 
----
-
-### Developer graph
+### Developer Graph
 
 ```http
 GET /api/developers/{name}/graph
 ```
 
-Returns:
+Returns the developer's known technologies, projects, and project technologies.
 
-* Developer
-* Known technologies
-* Projects
-* Project technologies
-
----
-
-### Connected technologies
+### Connected Technologies
 
 ```http
 GET /api/developers/{name}/recommendations
 ```
 
-Uses multi-hop graph traversal to find technologies connected to technologies used by projects the developer has worked on.
+Uses multi-hop graph traversal to discover technologies connected to technologies used by projects the developer has worked on.
 
-Example relationship path:
-
-```text
-Java
-  |
-  | RELATED_TO
-  v
-Spring Boot
-  |
-  | RELATED_TO
-  v
-Microservices
-```
-
----
-
-### Graph visualization data
+### Graph Visualization Data
 
 ```http
 GET /api/developers/{name}/graph/relationships
 ```
 
-Returns normalized graph data containing nodes and edges used by the React graph visualization.
+Returns normalized graph nodes and edges consumed by the React Flow visualization.
 
 ---
 
-### Health check
+## Key Cypher Queries
 
-```http
-GET /api/health
-```
-
-Returns:
-
-```text
-OK
-```
-
----
-
-## Cypher
-
-### Find technologies known by a developer
+### Find Technologies Known by a Developer
 
 ```cypher
 MATCH (d:Developer {name: $name})
@@ -325,11 +301,7 @@ MATCH (d:Developer {name: $name})
 RETURN t.name AS technology
 ```
 
-The developer name is supplied as a query parameter through the Neo4j Java Driver.
-
----
-
-### Find technologies used by projects
+### Find Technologies Used by Projects
 
 ```cypher
 MATCH (d:Developer {name: $name})
@@ -340,9 +312,7 @@ MATCH (d:Developer {name: $name})
 RETURN t.name AS technology
 ```
 
----
-
-### Multi-hop technology traversal
+### Multi-Hop Technology Discovery
 
 ```cypher
 MATCH (d:Developer {name: $name})
@@ -359,13 +329,13 @@ RETURN DISTINCT
        [node IN nodes(path) | node.name] AS path
 ```
 
-This demonstrates a 1–2 hop traversal through the technology graph.
+This query demonstrates multi-hop traversal through the technology graph.
 
 ---
 
-## Parameterized Queries
+## Parameterized Cypher
 
-User-controlled values are passed as query parameters rather than concatenated directly into Cypher.
+User-controlled values are passed as parameters through the official Neo4j Java Driver.
 
 Example:
 
@@ -380,15 +350,15 @@ Java supplies the value separately:
 Map.of("name", developerName)
 ```
 
-This keeps the queries safer and easier to maintain.
+No user input is concatenated into Cypher strings.
 
 ---
 
 ## Error Handling
 
-The backend uses centralized exception handling for application failures.
+The backend uses centralized exception handling.
 
-### Developer not found
+### Developer Not Found
 
 Returns:
 
@@ -396,7 +366,7 @@ Returns:
 404 Not Found
 ```
 
-### Graph database unavailable
+### Graph Database Unavailable
 
 Returns:
 
@@ -404,7 +374,7 @@ Returns:
 503 Service Unavailable
 ```
 
-### Unexpected application error
+### Unexpected Application Error
 
 Returns:
 
@@ -412,15 +382,15 @@ Returns:
 500 Internal Server Error
 ```
 
-Database sessions are managed using try-with-resources, and the Neo4j driver is configured as a Spring bean with a shutdown method so resources are released cleanly.
+Database sessions are managed using try-with-resources, and the Neo4j driver is configured with a shutdown method so resources are released cleanly when the application stops.
 
 ---
 
 ## Environment Variables
 
-Database credentials are never committed to source control.
+Database credentials are never stored in source control.
 
-Configure:
+### Backend
 
 ```text
 COGNODB_URI=<your CognoDB Bolt URI>
@@ -428,17 +398,13 @@ COGNODB_USERNAME=cognodb
 COGNODB_PASSWORD=<your password>
 ```
 
-The backend reads these values through Spring configuration.
+### Frontend
 
-Example `application.properties`:
-
-```properties
-cognodb.uri=${COGNODB_URI}
-cognodb.username=${COGNODB_USERNAME}
-cognodb.password=${COGNODB_PASSWORD}
+```text
+VITE_API_BASE_URL=<backend API URL>
 ```
 
-Never commit the actual password or other credentials.
+The actual credentials are configured through environment variables and are not committed to source control.
 
 ---
 
@@ -452,26 +418,14 @@ Never commit the actual password or other credentials.
 * npm
 * CognoDB instance
 
-### 1. Configure CognoDB
-
-Create a CognoDB instance and obtain the Bolt URI, username and password.
-
-Set the required environment variables.
-
-### 2. Start the backend
+### Start the Backend
 
 ```bash
 cd backend
 mvnw spring-boot:run
 ```
 
-Backend:
-
-```text
-http://localhost:8080
-```
-
-### 3. Start the frontend
+### Start the Frontend
 
 ```bash
 cd frontend
@@ -479,77 +433,58 @@ npm install
 npm run dev
 ```
 
-Frontend:
-
-```text
-http://localhost:5173
-```
-
 ---
 
-## UI
+## Production
 
-The application provides:
+### Frontend
 
-* Developer overview
-* Technology cards
-* Project information
-* Project technology stack
-* Connected technology recommendations
-* Interactive graph exploration
-* Loading and error states
+https://graph-app-one.vercel.app/
+
+### Backend
+
+https://graph-app-o34z.onrender.com/
+
+### GitHub Repository
+
+https://github.com/mrdhanrajg/graph-app
 
 ---
 
 ## Screenshots
 
-Add final screenshots here before submission:
+Store screenshots under:
 
 ```text
-docs/screenshots/dashboard.png
-docs/screenshots/graph.png
-docs/screenshots/recommendations.png
-docs/screenshots/error-state.png
+docs/screenshots/
 ```
 
-Example:
+Recommended screenshots:
 
-```markdown
-![Dashboard](docs/screenshots/dashboard.png)
-
-![Interactive Graph](docs/screenshots/graph.png)
-
-![Recommendations](docs/screenshots/recommendations.png)
-```
-
----
-
-## Hosted Demo
-
-Add the deployed application URL here:
-
-```text
-TODO: <hosted frontend URL>
-```
+* Dashboard
+* Interactive graph
+* Connected technologies
+* Error state
 
 ---
 
 ## Screen Recording
 
-Add the final walkthrough link here:
-
-```text
-TODO: <screen recording URL>
-```
-
-The walkthrough should demonstrate:
+The walkthrough demonstrates:
 
 1. Application overview
 2. Developer profile
 3. Technology and project relationships
 4. Interactive graph
-5. Multi-hop recommendations
-6. Explanation of why a graph database was selected
+5. Multi-hop technology discovery
+6. Why a graph database was selected
+7. High-level architecture
+
+Recording link:
+
+```text
+TODO: Add recording URL
+```
 
 ---
 
@@ -557,26 +492,25 @@ The walkthrough should demonstrate:
 
 ### Official Neo4j Java Driver
 
-CognoDB supports the official Neo4j drivers, so the application uses the official Java driver rather than a custom database SDK.
+CognoDB supports the official Neo4j drivers, so the backend uses the official Java driver directly.
 
-### Graph-oriented data model
+### Graph-Oriented Data Model
 
-Relationships are first-class elements of the model.
-
-For example:
+Relationships are first-class elements of the domain:
 
 ```text
 Developer -[:KNOWS]-> Technology
+
 Developer -[:WORKED_ON]-> Project
+
 Project -[:USES]-> Technology
+
 Technology -[:RELATED_TO]-> Technology
 ```
 
-### Relationship properties
+### Relationship Properties
 
-Properties describing a connection are stored on the relationship itself.
-
-Examples:
+Information describing a connection is stored on the relationship itself.
 
 ```text
 Developer -[:KNOWS {
@@ -598,9 +532,17 @@ Project -[:USES {
 }]-> Technology
 ```
 
-### API normalization
+### API Normalization
 
-The graph visualization endpoint converts database paths into a normalized nodes-and-edges representation consumed by the React frontend.
+The graph visualization endpoint converts graph paths into a normalized nodes-and-edges response consumed by the React frontend.
+
+### Centralized Exception Handling
+
+Database exceptions are translated into application-level exceptions and handled centrally rather than duplicating error handling logic across controllers.
+
+### Environment-Based Configuration
+
+Database credentials and environment-specific frontend configuration are provided through environment variables rather than committed to source control.
 
 ---
 
@@ -616,26 +558,20 @@ Possible extensions include:
 * Project recommendations
 * Authentication
 * Larger graph datasets
-* More advanced graph analytics
+* Advanced graph analytics
 
 ---
 
-## Assignment Deliverables
+## Links
 
-The repository contains:
+**GitHub:**
+https://github.com/mrdhanrajg/graph-app
 
-* Full source code
-* Graph seed data
-* Cypher queries
-* Graph data model documentation
-* Backend and frontend
-* Interactive graph visualization
-* Error handling
-* Environment-based database configuration
-* Setup instructions
+**Live Demo:**
+https://graph-app-one.vercel.app/
 
-The final submission will additionally provide:
+**Backend API:**
+https://graph-app-o34z.onrender.com/
 
-* Hosted application demo
-* Screen recording
-* Final screenshots
+**Screen Recording:**
+TODO: Add recording URL
