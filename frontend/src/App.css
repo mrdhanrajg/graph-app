@@ -173,6 +173,7 @@ input {
   display: flex;
   gap: 12px;
   align-items: center;
+  min-width: 0;
 }
 
 .technology-header h3 {
@@ -204,14 +205,20 @@ input {
   display: flex;
   gap: 14px;
   align-items: center;
+  min-width: 0;
   padding: 16px;
   border: 1px solid #e7eaf0;
   border-radius: 14px;
 }
 
+.project-content {
+  min-width: 0;
+}
+
 .project-content h3 {
   margin: 0 0 7px;
   font-size: 15px;
+  overflow-wrap: anywhere;
 }
 
 .project-meta {
@@ -219,6 +226,7 @@ input {
   gap: 16px;
   font-size: 12px;
   color: #7a8497;
+  flex-wrap: wrap;
 }
 
 .stack-list {
@@ -230,6 +238,8 @@ input {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 12px;
+  min-width: 0;
   padding: 15px 0;
   border-top: 1px solid #edf0f4;
 }
@@ -243,12 +253,17 @@ input {
   font-size: 14px;
 }
 
+.stack-row > div {
+  min-width: 0;
+}
+
 .stack-row span {
   font-size: 12px;
   color: #7a8497;
 }
 
 .version {
+  flex-shrink: 0;
   padding: 5px 9px;
   border-radius: 999px;
   background: #f2f4f8;
@@ -289,26 +304,6 @@ input {
   }
 }
 
-@media (max-width: 800px) {
-  .topbar {
-    padding: 0 20px;
-  }
-
-  .content {
-    width: min(100% - 32px, 700px);
-    padding-top: 32px;
-  }
-
-  .stats-grid,
-  .technology-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .hero h1 {
-    font-size: 34px;
-  }
-}
-
 .section-description {
   margin: -8px 0 20px;
   color: #7a8497;
@@ -320,12 +315,14 @@ input {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  min-width: 0;
 }
 
 .recommendation-row {
   display: flex;
   align-items: center;
   gap: 14px;
+  min-width: 0;
   padding: 14px;
   border: 1px solid #e7eaf0;
   border-radius: 12px;
@@ -345,7 +342,11 @@ input {
   display: flex;
   align-items: center;
   gap: 8px;
+  min-width: 0;
+  flex: 1;
   font-size: 14px;
+  flex-wrap: wrap;
+  overflow-wrap: anywhere;
 }
 
 .recommendation-path strong {
@@ -354,8 +355,11 @@ input {
 
 .recommendation-project {
   margin-left: auto;
+  max-width: 220px;
+  min-width: 0;
   font-size: 11px;
   color: #7a8497;
+  overflow-wrap: anywhere;
 }
 
 .empty-state {
@@ -370,5 +374,102 @@ input {
   display: inline-flex;
   align-items: center;
   gap: 7px;
+  min-width: 0;
   font-weight: 600;
+}
+
+@media (max-width: 800px) {
+  .topbar {
+    height: 68px;
+    padding: 0 20px;
+  }
+
+  .content {
+    width: min(100% - 32px, 700px);
+    padding-top: 32px;
+  }
+
+  .stats-grid,
+  .technology-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hero h1 {
+    font-size: 34px;
+  }
+
+  .card {
+    padding: 20px;
+  }
+
+  .recommendation-row {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .recommendation-path {
+    flex: 1;
+    min-width: 0;
+    flex-wrap: wrap;
+    line-height: 1.5;
+  }
+
+  .recommendation-project {
+    width: 100%;
+    max-width: none;
+    margin-left: 48px;
+    margin-top: 4px;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+  }
+
+  .project-card {
+    align-items: flex-start;
+  }
+
+  .stack-row {
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 480px) {
+  .topbar {
+    padding: 0 16px;
+  }
+
+  .content {
+    width: calc(100% - 24px);
+    padding-top: 24px;
+  }
+
+  .developer-badge {
+    padding: 7px 10px;
+    font-size: 12px;
+  }
+
+  .hero h1 {
+    font-size: 30px;
+  }
+
+  .card {
+    padding: 16px;
+    border-radius: 16px;
+  }
+
+  .recommendation-row {
+    gap: 10px;
+    padding: 12px;
+  }
+
+  .recommendation-project {
+    margin-left: 44px;
+  }
+
+  .path-item {
+    gap: 5px;
+  }
+
+  .project-meta {
+    gap: 8px;
+  }
 }
