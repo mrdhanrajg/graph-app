@@ -1,26 +1,30 @@
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL || "http://localhost:8080/api";
 
-export async function getDeveloperGraph(name) {
-  const response = await fetch(
-    `${API_BASE_URL}/developers/${encodeURIComponent(name)}/graph`
-  );
+async function request(endpoint) {
+  const response = await fetch(`${API_BASE_URL}${endpoint}`);
 
   if (!response.ok) {
-    throw new Error("Failed to fetch developer graph");
+    throw new Error(`Request failed with status ${response.status}`);
   }
 
   return response.json();
 }
 
-export async function getRecommendations(name) {
-  const response = await fetch(
-    `${API_BASE_URL}/developers/${encodeURIComponent(name)}/recommendations`
+export async function getDeveloperGraph(name) {
+  return request(
+    `/developers/${encodeURIComponent(name)}/graph`
   );
+}
 
-  if (!response.ok) {
-    throw new Error("Failed to fetch recommendations");
-  }
+export async function getRecommendations(name) {
+  return request(
+    `/developers/${encodeURIComponent(name)}/recommendations`
+  );
+}
 
-  return response.json();
+export async function getRelationshipGraph(name) {
+  return request(
+    `/developers/${encodeURIComponent(name)}/graph/relationships`
+  );
 }
