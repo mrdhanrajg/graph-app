@@ -453,37 +453,24 @@ https://github.com/mrdhanrajg/graph-app
 
 ## Screenshots
 
-Store screenshots under:
+Stored screenshots under:
 
 ```text
 docs/screenshots/
 ```
 
-Recommended screenshots:
-
 * Dashboard
 * Interactive graph
 * Connected technologies
-* Error state
 
 ---
 
 ## Screen Recording
 
-The walkthrough demonstrates:
-
-1. Application overview
-2. Developer profile
-3. Technology and project relationships
-4. Interactive graph
-5. Multi-hop technology discovery
-6. Why a graph database was selected
-7. High-level architecture
-
 Recording link:
 
 ```text
-TODO: Add recording URL
+https://drive.google.com/file/d/1n2l0db2PK4ZA9LlX4SbNdhvq5A8roX4z/view?usp=sharing
 ```
 
 ---
@@ -574,4 +561,4 @@ https://graph-app-one.vercel.app/
 https://graph-app-o34z.onrender.com/
 
 **Screen Recording:**
-TODO: Add recording URL
+https://drive.google.com/file/d/1n2l0db2PK4ZA9LlX4SbNdhvq5A8roX4z/view?usp=sharing
